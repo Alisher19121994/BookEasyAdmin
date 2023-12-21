@@ -1,9 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-Widget salesData(BuildContext context,DocumentSnapshot documentSnapshot) {
+import '../../pages/screens/home/update_page/update_sales_page.dart';
+
+Widget dealsData(BuildContext context,DocumentSnapshot documentSnapshot) {
+
+
   var height = MediaQuery.of(context).size.height;
   var width = MediaQuery.of(context).size.width;
+  final CollectionReference exploreDeals =
+  FirebaseFirestore.instance.collection('ExploreDeals');
+
+  Future<void> delete(String productID) async {
+    await exploreDeals.doc(productID).delete();
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.greenAccent,
+        content: Text('Deleted successfully')));
+  }
+
   return Container(
     margin: const EdgeInsets.all(6.0),
     height: height * 0.16,
@@ -25,11 +39,11 @@ Widget salesData(BuildContext context,DocumentSnapshot documentSnapshot) {
                  Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(documentSnapshot['salesTitle'], style: const TextStyle(color: Colors.black,
+                    Text(documentSnapshot['dealsDiscountTitle'], style: const TextStyle(color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.bold),),
                     const SizedBox(height: 8.0),
-                    Text(documentSnapshot['salesDescription'],
+                    Text(documentSnapshot['dealsTitle'],
                       style:
                       const TextStyle(color: Colors.black,
                           fontSize: 15,
@@ -55,13 +69,13 @@ Widget salesData(BuildContext context,DocumentSnapshot documentSnapshot) {
                       children: [
                         IconButton(
                             onPressed: (){
-
+                             // Navigator.push(context, MaterialPageRoute(builder: (_)=> UpdateHomeSalesPage(title: documentSnapshot['dealsTitle'],description: documentSnapshot['dealsDiscountTitle'],)));
                             },
-                            icon:Icon( Icons.edit)),
+                            icon:const Icon( Icons.edit)),
                         const SizedBox(height: 18.0),
                         IconButton(
                             onPressed: (){
-                             // delete(documentSnapshot.id);
+                             delete(documentSnapshot.id);
                             },
                             icon:const Icon( Icons.delete)),
                       ],

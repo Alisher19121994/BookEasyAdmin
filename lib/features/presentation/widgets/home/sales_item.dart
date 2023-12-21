@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-Widget moreForYouItem(BuildContext context, DocumentSnapshot documentSnapshot) {
+import '../../pages/screens/home/update_page/update_sales_page.dart';
+
+Widget salesItem(BuildContext context, DocumentSnapshot documentSnapshot) {
   var height = MediaQuery.of(context).size.height;
   var width = MediaQuery.of(context).size.width;
 
-  final CollectionReference exploreDeals =
-      FirebaseFirestore.instance.collection('ExploreDeals');
+  final CollectionReference salesData =
+      FirebaseFirestore.instance.collection('SalesData');
 
   Future<void> delete(String productID) async {
-    await exploreDeals.doc(productID).delete();
+    await salesData.doc(productID).delete();
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.greenAccent,
         content: Text('Deleted successfully')));
@@ -48,7 +50,7 @@ Widget moreForYouItem(BuildContext context, DocumentSnapshot documentSnapshot) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                documentSnapshot['dealsDiscountTitle'],
+                documentSnapshot['salesTitle'],
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 19,
@@ -56,7 +58,7 @@ Widget moreForYouItem(BuildContext context, DocumentSnapshot documentSnapshot) {
               ),
               const SizedBox(height: 8.0),
               Text(
-                documentSnapshot['dealsTitle'],
+                documentSnapshot['salesDescription'],
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
@@ -66,8 +68,18 @@ Widget moreForYouItem(BuildContext context, DocumentSnapshot documentSnapshot) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => UpdateHomeSalesPage(
+                                      title: documentSnapshot['salesTitle'],
+                                      description:
+                                          documentSnapshot['salesDescription'],
+                                    )));
+                      },
                       icon: const Icon(
                         Icons.edit,
                         color: Colors.white,

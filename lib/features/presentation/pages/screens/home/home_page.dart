@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../widgets/home/more_item.dart';
-import '../../../widgets/home/sales_data.dart';
+import '../../../widgets/home/sales_item.dart';
+import '../../../widgets/home/deal_data.dart';
 import '../../../widgets/home/travel_more_list.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,6 +15,38 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  Future<String?> addCollection(String hotelPlaceName)async{
+    final CollectionReference destinations = FirebaseFirestore.instance.collection('Destinations');
+    var response = await destinations.add({
+      "hotel_place_name" : hotelPlaceName
+    });
+    addMultiCollection(id: response.id);
+    return 'Created';
+  }
+
+  Future<String?> addMultiCollection({String? id,String? hotelName,})async{
+    final CollectionReference destinations = FirebaseFirestore.instance.collection('Destinations');
+    destinations.doc(id).collection('CitiesDetails').add({
+      "id":id,
+      "hotel_name":hotelName,
+      "hotel_price":"\$ 45",
+      "hotel_title":"287 properties",
+      "hotel_description":"64 Late Escape Deals",
+      "hotel_deals_started_at":"\$ 9",
+      "hotel_image":"https://media.istockphoto.com/id/104731717/photo/luxury-resort.jpg?s=612x612&w=0&k=20&c=cODMSPbYyrn1FHake1xYz9M8r15iOfGz9Aosy9Db7mI=",
+      "hotel_details":
+      {
+        "distance":"123 miles far from the center",
+        "merit":"Top level 5 stars",
+
+      }
+    }).then((value){
+      print('addMultiCollection fun id: ---> ${value.id}');
+    });
+    return 'Success';
+  }
+
 
   TextEditingController discountTitleController = TextEditingController();
   TextEditingController titleController = TextEditingController();
@@ -226,8 +258,8 @@ class _HomePageState extends State<HomePage> {
                   Form(
                     key: _formKeySales,
                     child: Container(
-                      margin: EdgeInsets.all(3.0),
-                      padding: EdgeInsets.all(2.0),
+                      margin: const EdgeInsets.all(3.0),
+                      padding: const EdgeInsets.all(2.0),
                       height: 500,
                       width: 300,
                       color: Colors.white,
@@ -296,6 +328,9 @@ class _HomePageState extends State<HomePage> {
                             width: 160,
                             child: ElevatedButton(
                                 onPressed: ()async{
+
+                                  //addCollection();
+
                                   String discount = salesDiscountTitleController.text;
                                   String title = salesTitleController.text;
 
@@ -361,15 +396,15 @@ class _HomePageState extends State<HomePage> {
                         width: double.infinity,
                         child:  StreamBuilder(
                           stream: _exploreDeals.snapshots(),
-                          builder: (context, AsyncSnapshot<QuerySnapshot> snapshots){
-                            if(snapshots.hasData){
+                          builder: (context, AsyncSnapshot<QuerySnapshot> snapshotss){
+                            if(snapshotss.hasData){
                               return ListView.builder(
                                   shrinkWrap: true,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: snapshots.data!.docs.length,
+                                  itemCount: snapshotss.data!.docs.length,
                                   itemBuilder: (context, index){
-                                  final DocumentSnapshot documentSnapshot = snapshots.data!.docs[index];
-                                  return moreForYouItem(context,documentSnapshot);
+                                    final DocumentSnapshot documentSnapshot = snapshotss.data!.docs[index];
+                                    return dealsData(context,documentSnapshot);
                                   }
                               );
                             }
@@ -384,15 +419,15 @@ class _HomePageState extends State<HomePage> {
                         width: double.infinity,
                         child:  StreamBuilder(
                           stream: _salesData.snapshots(),
-                          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot){
-                            if(snapshot.hasData){
+                          builder: (context, AsyncSnapshot<QuerySnapshot> snapshots){
+                            if(snapshots.hasData){
                               return ListView.builder(
                                   shrinkWrap: true,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: snapshot.data!.docs.length,
+                                  itemCount: snapshots.data!.docs.length,
                                   itemBuilder: (context, index){
-                                    final DocumentSnapshot documentSnapshot = snapshot.data!.docs[index];
-                                    return salesData(context,documentSnapshot);
+                                  final DocumentSnapshot documentSnapshot = snapshots.data!.docs[index];
+                                  return salesItem(context,documentSnapshot);
                                   }
                               );
                             }
@@ -401,6 +436,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const Divider(thickness: 2.0,),
+
                     ],
                   ),
                 ),
