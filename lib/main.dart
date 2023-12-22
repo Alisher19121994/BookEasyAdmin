@@ -2,7 +2,6 @@ import 'package:book_easy_admin/features/presentation/pages/screens/home/home_pa
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'features/presentation/pages/screens/bookings/bookings_page.dart';
-import 'features/presentation/pages/screens/home/update_page/update_sales_page.dart';
 import 'features/presentation/pages/screens/main_screen.dart';
 import 'features/presentation/pages/screens/profile/profile_page.dart';
 import 'features/presentation/pages/screens/profile/tabs/deals_page.dart';
@@ -32,7 +31,6 @@ class MyApp extends StatelessWidget {
       SavedPage.id: (context) => const SavedPage(),
       BookingsPage.id: (context) => const BookingsPage(),
       ProfilePage.id: (context) => const ProfilePage(),
-      UpdateHomeSalesPage.id: (context) =>  const UpdateHomeSalesPage(),
       TravelArticlesPage.id: (context) =>  const TravelArticlesPage(),
       EatAndDrinkPage.id: (context) =>  const EatAndDrinkPage(),
       TravelTipsPage.id: (context) =>  const TravelTipsPage(),

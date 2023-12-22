@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../pages/screens/home/update_page/update_sales_page.dart';
-
 Widget salesItem(BuildContext context, DocumentSnapshot documentSnapshot) {
   var height = MediaQuery.of(context).size.height;
   var width = MediaQuery.of(context).size.width;
