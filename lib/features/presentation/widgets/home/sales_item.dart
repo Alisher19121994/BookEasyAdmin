@@ -10,8 +10,66 @@ Widget salesItem(BuildContext context, DocumentSnapshot documentSnapshot) {
   final CollectionReference salesData =
       FirebaseFirestore.instance.collection('SalesData');
 
-  Future<void> delete(String productID) async {
-    await salesData.doc(productID).delete();
+  TextEditingController salesDiscountTitleController = TextEditingController();
+  TextEditingController salesTitleController = TextEditingController();
+
+  Future<void> showData()async{
+    salesDiscountTitleController.text = documentSnapshot['salesDescription'];
+    salesTitleController.text = documentSnapshot['salesTitle'];
+    showAdaptiveDialog(
+      context: context,
+      builder: (context){
+        return Scaffold(
+            body: Container(
+              padding: const EdgeInsets.all(50),
+              margin: const EdgeInsets.all(50),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      controller: salesTitleController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                          label: Text('Title')
+                      ),
+                    ),
+                    const SizedBox(height: 10,),
+                    TextFormField(
+                      controller: salesDiscountTitleController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          label: Text('discount Title')
+                      ),
+                    ),
+
+                    const SizedBox(height: 20,),
+                    SizedBox(
+                      height: 50,
+                      width: 120,
+                      child: ElevatedButton(
+                          onPressed: ()async{
+                            String discount = salesDiscountTitleController.text;
+                            String title = salesTitleController.text;
+
+                            await salesData.doc(documentSnapshot.id).update({
+                              'salesDescription': discount, 'salesTitle':title
+                            });
+                            salesDiscountTitleController.text = '';
+                            salesTitleController.text = '';
+
+                          },
+                          child: Text('Press')),
+                    )
+                  ],
+                ),
+            ),
+        );
+      },
+    );
+  }
+
+  void delete(String productID) {
+    salesData.doc(productID).delete();
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.greenAccent,
         content: Text('Deleted successfully')));
@@ -49,16 +107,14 @@ Widget salesItem(BuildContext context, DocumentSnapshot documentSnapshot) {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                documentSnapshot['salesTitle'],
+              Text(documentSnapshot['salesTitle'],
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 19,
                     fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8.0),
-              Text(
-                documentSnapshot['salesDescription'],
+              Text(documentSnapshot['salesDescription'],
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
@@ -68,17 +124,10 @@ Widget salesItem(BuildContext context, DocumentSnapshot documentSnapshot) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-
                   IconButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => UpdateHomeSalesPage(
-                                      title: documentSnapshot['salesTitle'],
-                                      description:
-                                          documentSnapshot['salesDescription'],
-                                    )));
+                        showData();
+                    //    Navigator.push(context, MaterialPageRoute(builder: (_) => const UpdateHomeSalesPage()));
                       },
                       icon: const Icon(
                         Icons.edit,

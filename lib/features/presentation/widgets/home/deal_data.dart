@@ -11,6 +11,64 @@ Widget dealsData(BuildContext context,DocumentSnapshot documentSnapshot) {
   final CollectionReference exploreDeals =
   FirebaseFirestore.instance.collection('ExploreDeals');
 
+  TextEditingController dealsDiscountTitleController = TextEditingController();
+  TextEditingController dealsTitleController = TextEditingController();
+
+  Future<void> showData()async{
+    dealsDiscountTitleController.text = documentSnapshot['dealsDiscountTitle'];
+    dealsTitleController.text = documentSnapshot['dealsTitle'];
+    showAdaptiveDialog(
+      context: context,
+      builder: (context){
+        return Scaffold(
+          body: Container(
+            padding: const EdgeInsets.all(50),
+            margin: const EdgeInsets.all(50),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
+                  controller: dealsTitleController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text('deals title')
+                  ),
+                ),
+                const SizedBox(height: 10,),
+                TextFormField(
+                  controller: dealsDiscountTitleController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text('deals discount title')
+                  ),
+                ),
+
+                const SizedBox(height: 20,),
+                SizedBox(
+                  height: 50,
+                  width: 120,
+                  child: ElevatedButton(
+                      onPressed: ()async{
+                        String discount = dealsDiscountTitleController.text;
+                        String title = dealsTitleController.text;
+
+                        await exploreDeals.doc(documentSnapshot.id).update({
+                          'dealsDiscountTitle': discount, 'dealsTitle':title
+                        });
+                        dealsDiscountTitleController.text = '';
+                        dealsTitleController.text = '';
+
+                      },
+                      child: Text('Press')),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> delete(String productID) async {
     await exploreDeals.doc(productID).delete();
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -69,6 +127,7 @@ Widget dealsData(BuildContext context,DocumentSnapshot documentSnapshot) {
                       children: [
                         IconButton(
                             onPressed: (){
+                              showData();
                              // Navigator.push(context, MaterialPageRoute(builder: (_)=> UpdateHomeSalesPage(title: documentSnapshot['dealsTitle'],description: documentSnapshot['dealsDiscountTitle'],)));
                             },
                             icon:const Icon( Icons.edit)),

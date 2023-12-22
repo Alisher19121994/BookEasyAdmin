@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Widget travelMoreList(BuildContext context,DocumentSnapshot documentSnapshot){
@@ -10,14 +9,73 @@ Widget travelMoreList(BuildContext context,DocumentSnapshot documentSnapshot){
   final CollectionReference travelMoreList =
   FirebaseFirestore.instance.collection('TravelMoreList');
 
-  Future<void> delete(String productId)async{
-    await travelMoreList.doc(productId).delete();
+  TextEditingController travelDiscountTitleController = TextEditingController();
+  TextEditingController travelTitleController = TextEditingController();
 
+  Future<void> showData()async{
+    travelDiscountTitleController.text = documentSnapshot['discountTitle'];
+    travelTitleController.text = documentSnapshot['title'];
+    showAdaptiveDialog(
+      context: context,
+      builder: (context){
+        return Scaffold(
+          body: Container(
+            padding: const EdgeInsets.all(50),
+            margin: const EdgeInsets.all(50),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
+                  controller: travelTitleController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text('deals title')
+                  ),
+                ),
+                const SizedBox(height: 10,),
+                TextFormField(
+                  controller: travelDiscountTitleController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text('deals discount title')
+                  ),
+                ),
+
+                const SizedBox(height: 20,),
+                SizedBox(
+                  height: 50,
+                  width: 120,
+                  child: ElevatedButton(
+                      onPressed: ()async{
+                        String discount = travelDiscountTitleController.text;
+                        String title = travelTitleController.text;
+
+                        await travelMoreList.doc(documentSnapshot.id).update({
+                          'discountTitle': discount, 'title':title
+                        });
+                        travelDiscountTitleController.text = '';
+                        travelTitleController.text = '';
+
+                      },
+                      child: Text('Press')),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  delete(String productId){
+     travelMoreList.doc(productId).delete();
     ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             backgroundColor: Colors.greenAccent,
             content: Text('Deleted successfully')));
   }
+
+
   return Container(
     margin: const EdgeInsets.all(6.0),
     padding: const EdgeInsets.all(12.0),
@@ -39,9 +97,9 @@ Widget travelMoreList(BuildContext context,DocumentSnapshot documentSnapshot){
           children: [
             IconButton(
                 onPressed: (){
-
+                    showData();
                 },
-                icon:Icon( Icons.edit)),
+                icon:const Icon( Icons.edit)),
             const SizedBox(height: 18.0),
             IconButton(
                 onPressed: (){

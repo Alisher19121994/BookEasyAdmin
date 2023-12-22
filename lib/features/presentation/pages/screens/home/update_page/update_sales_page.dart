@@ -2,11 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class UpdateHomeSalesPage extends StatefulWidget {
-  final String title;
-  final String description;
-
   const UpdateHomeSalesPage(
-      {super.key, required this.title, required this.description});
+      {super.key});
 
   static const String id = 'UpdateHomeSalesPage';
 
@@ -19,14 +16,62 @@ class _UpdateHomeSalesPageState extends State<UpdateHomeSalesPage> {
   TextEditingController salesTitleController = TextEditingController();
 
   final _formKeySales = GlobalKey<FormState>();
+  late DocumentSnapshot documentSnapshot;
 
   final CollectionReference _salesData = FirebaseFirestore.instance.collection('SalesData');
 
-  Future<void> showData([DocumentSnapshot? documentSnapshot])async{
-    if(documentSnapshot != null){
-      salesDiscountTitleController.text = widget.description;
-      salesTitleController.text = widget.title;
-    }}
+  late String title;
+  late String description;
+
+  //
+  // Future<void> showData([DocumentSnapshot? documentSnapshot])async{
+  //   if(documentSnapshot != null){
+  //     salesDiscountTitleController.text = documentSnapshot['salesDescription'];
+  //     salesTitleController.text = documentSnapshot['salesTitle'];
+  //   }
+  //   await showModalBottomSheet(
+  //       isScrollControlled: true,
+  //       builder: (context){
+  //         return Container(
+  //           padding: EdgeInsets.all(20),
+  //           margin: EdgeInsets.all(20),
+  //           child: Center(
+  //             child: Column(
+  //               children: [
+  //                 TextFormField(
+  //                   controller: salesDiscountTitleController,
+  //                   decoration: InputDecoration(
+  //                       label: Text('discountTitle')
+  //                   ),
+  //                 ),
+  //                 TextFormField(
+  //                   controller: salesTitleController,
+  //                   decoration: InputDecoration(
+  //                       label: Text('Title')
+  //                   ),
+  //                 ),
+  //
+  //                 ElevatedButton(
+  //                     onPressed: ()async{
+  //                       String discount = salesDiscountTitleController.text;
+  //                       String title = salesTitleController.text;
+  //
+  //                       await _salesData.doc(documentSnapshot!.id).update({
+  //                         'salesDescription': discount, 'salesTitle':title
+  //                       });
+  //                       salesDiscountTitleController.text = '';
+  //                       salesTitleController.text = '';
+  //
+  //                     },
+  //                     child: Text('Press'))
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       }, context: context);
+  // }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -52,7 +97,7 @@ class _UpdateHomeSalesPageState extends State<UpdateHomeSalesPage> {
                   ),
                   const SizedBox(height: 12.0,),
                   TextFormField(
-                    controller: salesDiscountTitleController,
+                    //controller: salesDiscountTitleController,
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         label: Text('Sales title',style: TextStyle(color: Colors.black54,fontWeight: FontWeight.normal,fontSize: 18))
@@ -63,11 +108,17 @@ class _UpdateHomeSalesPageState extends State<UpdateHomeSalesPage> {
                       }
                       return null;
                     },
+                    onChanged: (data){
+                      setState(() {
+                        title = documentSnapshot['salesTitle'];
+                        title = data;
+                      });
+                    },
                     //autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   const SizedBox(height: 12.0,),
                   TextFormField(
-                    controller: salesTitleController,
+                 //   controller: salesTitleController,
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         label: Text('Sales description',style: TextStyle(color: Colors.black54,fontWeight: FontWeight.normal,fontSize: 18))
@@ -77,6 +128,12 @@ class _UpdateHomeSalesPageState extends State<UpdateHomeSalesPage> {
                         return 'Please enter the sales description';
                       }
                       return null;
+                    },
+                    onChanged: (data){
+                      setState(() {
+                        description = documentSnapshot['salesDescription'];
+                        description = data;
+                      });
                     },
                     //  autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
@@ -109,15 +166,22 @@ class _UpdateHomeSalesPageState extends State<UpdateHomeSalesPage> {
                     width: 160,
                     child: ElevatedButton(
                         onPressed: ()async{
-                          String discount = salesDiscountTitleController.text;
-                          String title = salesTitleController.text;
 
+                          String discount = salesDiscountTitleController.text;
+                         // String title = salesTitleController.text;
+                       //   showData();
                           if(_formKeySales.currentState!.validate()){
-                            await _salesData.add({
-                              'salesTitle': discount, 'salesDescription':title
+                            await _salesData.doc(documentSnapshot.id).update({
+                              'salesDescription': description, 'salesTitle':title
                             });
                             salesDiscountTitleController.text = '';
                             salesTitleController.text = '';
+                           // showData();
+                            // await _salesData.add({
+                            //   'salesTitle': discount, 'salesDescription':title
+                            // });
+                            // salesDiscountTitleController.text = '';
+                            // salesTitleController.text = '';
 
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
