@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'features/presentation/pages/screens/bookings/bookings_page.dart';
 import 'features/presentation/pages/screens/main_screen.dart';
 import 'features/presentation/pages/screens/profile/profile_page.dart';
+import 'features/presentation/pages/screens/profile/tabs/airport_taxis.dart';
 import 'features/presentation/pages/screens/profile/tabs/deals_page.dart';
 import 'features/presentation/pages/screens/profile/tabs/eat_and_drink.dart';
 import 'features/presentation/pages/screens/profile/tabs/travel_articles.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
       EatAndDrinkPage.id: (context) =>  const EatAndDrinkPage(),
       TravelTipsPage.id: (context) =>  const TravelTipsPage(),
       DealsPage.id: (context) =>  const DealsPage(),
+      AirportTaxisPages.id: (context) =>  const AirportTaxisPages(),
     });
   }
 }

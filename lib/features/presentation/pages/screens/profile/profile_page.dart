@@ -1,3 +1,4 @@
+import 'package:book_easy_admin/features/presentation/pages/screens/profile/tabs/airport_taxis.dart';
 import 'package:book_easy_admin/features/presentation/pages/screens/profile/tabs/deals_page.dart';
 import 'package:book_easy_admin/features/presentation/pages/screens/profile/tabs/eat_and_drink.dart';
 import 'package:book_easy_admin/features/presentation/pages/screens/profile/tabs/travel_articles.dart';
@@ -17,7 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xff003290),
@@ -62,6 +63,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       color: Colors.white, fontWeight: FontWeight.normal),
                 ),
               ),
+              Tab(
+                child: Text(
+                  "Airport taxis",
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.normal),
+                ),
+              ),
             ],
           ),
         ),
@@ -70,7 +78,8 @@ class _ProfilePageState extends State<ProfilePage> {
               DealsPage(),
               TravelArticlesPage(),
               EatAndDrinkPage(),
-              TravelTipsPage()
+              TravelTipsPage(),
+              AirportTaxisPages()
             ]),
       ),
     );
